@@ -14,8 +14,6 @@ public class NetworkProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(NetworkProvider.class);
 
-    private final int BUFFER_SIZE = 1024 * 1024;
-
     private final DatagramSocket serverSocket;
 
     public NetworkProvider(int port) throws IOException {
@@ -24,7 +22,7 @@ public class NetworkProvider {
         // datagramChannel.configureBlocking(false);
 
         serverSocket = datagramChannel.socket();
-        serverSocket.setSoTimeout(100);
+        serverSocket.setSoTimeout(2000);
         serverSocket.bind(new InetSocketAddress(port));
     }
 
@@ -34,6 +32,7 @@ public class NetworkProvider {
 
         try {
 
+            int BUFFER_SIZE = 1024 * 1024;
             ByteBuffer buf = ByteBuffer.allocate(BUFFER_SIZE);
             DatagramPacket datagramPacket = new DatagramPacket(buf.array(), buf.array().length);
 

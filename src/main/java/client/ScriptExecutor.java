@@ -11,13 +11,7 @@ import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
 import commonModule.exceptions.commandExceptions.NoSuchCommandException;
 import commonModule.io.consoleIO.CommandParser;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -34,7 +28,7 @@ public class ScriptExecutor {
     /**
      * Executes the commands from the script file located at the given file path.
      */
-    public void executeScript(String filePath, client.NetworkProvider networkProvider) throws Exception {
+    public void executeScript(String filePath, NetworkProvider networkProvider) throws Exception {
 
         File file = new File(filePath);
         Scanner scanner = new Scanner(file);

@@ -1,17 +1,9 @@
 package commonModule.commands;
 
-import commonModule.commands.commandObjects.*;
 import server.collectionManagement.CollectionManager;
 import server.collectionManagement.CollectionPrinter;
 import commonModule.dataStructures.Response;
-import commonModule.dataStructures.Triplet;
-import commonModule.exceptions.ScriptsRecursionException;
-import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
-import commonModule.io.consoleIO.CommandParser;
-import commonModule.io.fileIO.out.HumanBeingXMLWriter;
-import commonModule.collectionClasses.HumanBeing;
 
-import java.util.*;
 
 /**
  * The `CommandsExecutor` class is responsible for executing commands.
@@ -42,17 +34,6 @@ public class CommandsExecutor {
     public CommandsExecutor(CollectionManager collectionManager, CollectionPrinter collectionPrinter) {
         this.collectionManager = collectionManager;
         this.collectionPrinter = collectionPrinter;
-        // fillCommandLists();
-    }
-
-    private boolean checkCollectionChanges(Map<Long, HumanBeing> collectionBeforeCommand, Map<Long, HumanBeing> collectionAfterCommand) {
-        boolean equals = (collectionAfterCommand.size() == collectionBeforeCommand.size());
-        for (Long key : collectionAfterCommand.keySet()) {
-            if (!collectionBeforeCommand.containsKey(key) || !collectionBeforeCommand.get(key).equals(collectionAfterCommand.get(key))) {
-                equals = false;
-            }
-        }
-        return equals;
     }
 
     /**
@@ -60,7 +41,7 @@ public class CommandsExecutor {
 
      @throws Exception if an error occurs during the execution of the command
      */
-    public void execute(CommandWithResponse command) throws Exception {
+    public synchronized void execute(CommandWithResponse command) throws Exception {
 
         command.setCollectionManager(collectionManager);
         command.setCollectionPrinter(collectionPrinter);

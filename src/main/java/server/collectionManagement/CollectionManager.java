@@ -33,7 +33,7 @@ public class CollectionManager {
      */
     private final java.time.LocalDate creationDate;
 
-    private HumanBeingXMLWriter humanBeingXMLWriter;
+    private final HumanBeingXMLWriter humanBeingXMLWriter;
 
     /**
      * The collection of {@link HumanBeing} objects.
@@ -99,7 +99,7 @@ public class CollectionManager {
         HashMap<Long, HumanBeing> sortedMap = new LinkedHashMap<>();
 
         data.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(new CollectionManager.Comparator()))
+                .sorted(Map.Entry.comparingByValue(new Comparator()))
                 .forEachOrdered(entry -> sortedMap.put(entry.getKey(), entry.getValue()));
 
         data.clear();
