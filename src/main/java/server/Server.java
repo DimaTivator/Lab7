@@ -10,19 +10,54 @@ import server.collectionManagement.CollectionManager;
 import server.collectionManagement.CollectionPrinter;
 import commonModule.commands.CommandsExecutor;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.BindException;
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import server.database.DatabaseHandler;
 
 public class Server {
 
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
     public static void main(String[] args) {
+
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            System.exit(0);
+        }
+
+        Scanner fileScanner = null;
+        try {
+            fileScanner = new Scanner(new FileReader("db_config"));
+        } catch (FileNotFoundException e) {
+            System.out.println(ConsoleColors.RED + "Can't found the file `db_config`" + ConsoleColors.RESET);
+            System.exit(0);
+        }
+
+        String username = null;
+        String password = null;
+
+        try {
+            username = fileScanner.nextLine().trim();
+            password = fileScanner.nextLine().trim();
+        } catch (NoSuchElementException e) {
+            System.out.println("Unable to read username and password from db_config");
+            System.exit(0);
+        }
+
+        DatabaseHandler databaseHandler = new DatabaseHandler("jdbc:postgresql://localhost:5432/studs", username, password);
+        databaseHandler.connect();
+
 
         if (args.length == 0) {
             System.out.println(ConsoleColors.RED + "You should enter port as an argument!" + ConsoleColors.RESET);
