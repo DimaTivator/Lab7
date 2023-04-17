@@ -38,7 +38,7 @@ public class CollectionManager {
     /**
      * The collection of {@link HumanBeing} objects.
      */
-    private Map<Long, HumanBeing> data = new LinkedHashMap<>();
+    private Map<Long, HumanBeing> data = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
      * Constructs a new CollectionManager and sets the creation date to the current date.

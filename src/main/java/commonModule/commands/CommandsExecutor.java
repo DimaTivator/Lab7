@@ -41,7 +41,7 @@ public class CommandsExecutor {
 
      @throws Exception if an error occurs during the execution of the command
      */
-    public synchronized void execute(CommandWithResponse command) throws Exception {
+    public void execute(CommandWithResponse command) throws Exception {
 
         command.setCollectionManager(collectionManager);
         command.setCollectionPrinter(collectionPrinter);
@@ -49,7 +49,6 @@ public class CommandsExecutor {
         command.execute();
 
         response = command.getCommandResponse();
-
     }
 
     public Response getCommandResponse() {
