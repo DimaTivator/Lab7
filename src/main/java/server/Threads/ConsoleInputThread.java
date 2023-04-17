@@ -5,7 +5,6 @@ import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
 import commonModule.exceptions.commandExceptions.NoSuchCommandException;
 import org.slf4j.Logger;
 import server.ServerCommandExecutor;
-import server.collectionManagement.CollectionManager;
 
 import java.util.Arrays;
 import java.util.List;

@@ -19,10 +19,9 @@ public class NetworkProvider {
     public NetworkProvider(int port) throws IOException {
 
         DatagramChannel datagramChannel = DatagramChannel.open();
-        // datagramChannel.configureBlocking(false);
 
         serverSocket = datagramChannel.socket();
-        serverSocket.setSoTimeout(2000);
+        // serverSocket.setSoTimeout(2000);
         serverSocket.bind(new InetSocketAddress(port));
     }
 

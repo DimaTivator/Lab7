@@ -67,10 +67,12 @@ public class ScriptExecutor {
             } catch (ScriptsRecursionException | NoSuchCommandException | InvalidArgumentsException |
                      InvalidCoordinatesException e) {
                 System.out.println(e.getMessage());
+
             } catch (Exception e) {
                 break;
             }
         }
+        usedScripts.clear();
     }
 }
 
