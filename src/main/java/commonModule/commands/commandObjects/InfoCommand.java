@@ -2,9 +2,10 @@ package commonModule.commands.commandObjects;
 
 import commonModule.auxiliaryClasses.ConsoleColors;
 import commonModule.commands.CommandTemplate;
+import commonModule.dataStructures.network.CommandResponse;
 import server.collectionManagement.CollectionManager;
 import server.collectionManagement.CollectionPrinter;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Response;
 import commonModule.commands.CommandWithResponse;
 
 /**
@@ -46,6 +47,6 @@ public class InfoCommand extends CommandTemplate implements CommandWithResponse 
 
     @Override
     public Response getCommandResponse() {
-        return new Response("info", getArgs(), output.toString());
+        return new CommandResponse("info", getArgs(), output.toString());
     }
 }

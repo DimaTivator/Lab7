@@ -2,8 +2,9 @@ package client;
 
 
 import commonModule.auxiliaryClasses.ConsoleColors;
-import commonModule.dataStructures.Request;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.CommandRequest;
+import commonModule.dataStructures.network.CommandResponse;
+import commonModule.dataStructures.network.Request;
 import commonModule.dataStructures.Triplet;
 import commonModule.exceptions.InvalidCoordinatesException;
 import commonModule.exceptions.ScriptsRecursionException;
@@ -52,10 +53,10 @@ public class ScriptExecutor {
                     executeScript(args[0], networkProvider);
                 }
                 else {
-                    request = new Request(commandParser.pack(parsedCommand));
+                    request = new CommandRequest(commandParser.pack(parsedCommand));
                     networkProvider.send(request);
 
-                    Response response = networkProvider.receive();
+                    CommandResponse response = (CommandResponse) networkProvider.receive();
 
                     if (response == null) {
                         System.out.println(ConsoleColors.RED + "Server is down :(\nPlease try again later" + ConsoleColors.RESET);

@@ -1,8 +1,9 @@
 package commonModule.commands.commandObjects;
 
+import commonModule.dataStructures.network.CommandResponse;
 import server.collectionManagement.CollectionManager;
 import commonModule.collectionClasses.HumanBeing;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Response;
 import commonModule.commands.CommandTemplate;
 import commonModule.commands.CommandWithResponse;
 
@@ -36,6 +37,6 @@ public class ClearCollectionCommand extends CommandTemplate implements CommandWi
 
     @Override
     public Response getCommandResponse() {
-        return new Response("clear", getArgs(), "Done!");
+        return new CommandResponse("clear", getArgs(), "Done!");
     }
 }

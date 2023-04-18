@@ -2,8 +2,10 @@ package server.Threads;
 
 import commonModule.commands.CommandWithResponse;
 import commonModule.commands.CommandsExecutor;
-import commonModule.dataStructures.Request;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.CommandRequest;
+import commonModule.dataStructures.network.CommandResponse;
+import commonModule.dataStructures.network.Request;
+import commonModule.dataStructures.network.Response;
 import org.slf4j.Logger;
 import server.NetworkProvider;
 import server.collectionManagement.CollectionManager;
@@ -12,14 +14,14 @@ import java.util.concurrent.RecursiveAction;
 
 public class ExecuteCommandAction extends RecursiveAction {
 
-    private final Request request;
+    private final CommandRequest request;
     private final Logger logger;
     private final CommandsExecutor commandsExecutor;
     private final NetworkProvider networkProvider;
     private final CollectionManager collectionManager;
     private final String clientsDataPath;
 
-    public ExecuteCommandAction(Request request, Logger logger, CommandsExecutor commandsExecutor,
+    public ExecuteCommandAction(CommandRequest request, Logger logger, CommandsExecutor commandsExecutor,
                                 NetworkProvider networkProvider, CollectionManager collectionManager, String clientsDataPath) {
         this.request = request;
         this.logger = logger;
@@ -41,7 +43,7 @@ public class ExecuteCommandAction extends RecursiveAction {
 
         } catch (Exception e) {
             logger.info("Command {} threw the exception: {}", request.getCommand().getClass(), e.getClass());
-            response = new Response("Exception", null, e.getMessage());
+            response = new CommandResponse("Exception", null, e.getMessage());
 
         } finally {
             collectionManager.save(clientsDataPath);

@@ -2,8 +2,10 @@ package client;
 
 import commonModule.auxiliaryClasses.ConsoleColors;
 import commonModule.commands.Command;
-import commonModule.dataStructures.Request;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.CommandRequest;
+import commonModule.dataStructures.network.CommandResponse;
+import commonModule.dataStructures.network.Request;
+import commonModule.dataStructures.network.Response;
 import commonModule.dataStructures.Triplet;
 import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
 import commonModule.io.consoleIO.CommandParser;
@@ -40,7 +42,7 @@ public class Client {
         String commandName;
         String[] commandArgs;
         Request request;
-        Response response;
+        CommandResponse response;
 
         try {
 
@@ -67,6 +69,9 @@ public class Client {
                 }
             }
 
+            // User authentication
+            Authenticator authenticator = new Authenticator(networkProvider);
+            authenticator.authenticate();
 
             System.out.println("If you want to see the list of available commands, enter 'help'");
 
@@ -100,9 +105,9 @@ public class Client {
 
                         Command command = commandParser.pack(parsedInput);
 
-                        request = new Request(command);
+                        request = new CommandRequest(command);
                         networkProvider.send(request);
-                        response = networkProvider.receive();
+                        response = (CommandResponse) networkProvider.receive();
 
                         if (response == null) {
                             System.out.println(ConsoleColors.RED + "Server is down :(\nPlease try again later" + ConsoleColors.RESET);

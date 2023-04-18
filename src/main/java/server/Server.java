@@ -27,7 +27,7 @@ public class Server {
 
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
         try {
             Class.forName("org.postgresql.Driver");
@@ -139,6 +139,7 @@ public class Server {
         try {
 
             Thread clientHandlerThread = new ClientHandlerThread(
+                    databaseHandler,
                     networkProvider,
                     logger,
                     commandsExecutor,

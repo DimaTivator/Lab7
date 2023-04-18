@@ -1,6 +1,6 @@
 package server.Threads;
 
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Response;
 import server.NetworkProvider;
 
 import java.net.SocketAddress;

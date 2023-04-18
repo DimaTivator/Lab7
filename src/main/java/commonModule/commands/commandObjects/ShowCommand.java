@@ -1,8 +1,9 @@
 package commonModule.commands.commandObjects;
 
 import commonModule.commands.CommandTemplate;
+import commonModule.dataStructures.network.CommandResponse;
 import server.collectionManagement.CollectionManager;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Response;
 import commonModule.exceptions.EmptyCollectionException;
 import commonModule.collectionClasses.HumanBeing;
 import commonModule.commands.CommandWithResponse;
@@ -47,6 +48,6 @@ public class ShowCommand extends CommandTemplate implements CommandWithResponse 
 
     @Override
     public Response getCommandResponse() {
-        return new Response("show", getArgs(), output.toString());
+        return new CommandResponse("show", getArgs(), output.toString());
     }
 }

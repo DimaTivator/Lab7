@@ -1,46 +1,37 @@
 package client;
 
 import commonModule.auxiliaryClasses.ConsoleColors;
+import commonModule.dataStructures.network.AuthenticationRequest;
+import commonModule.dataStructures.network.AuthenticationResponse;
+import commonModule.dataStructures.network.Request;
 import commonModule.exceptions.InvalidInputException;
 
 import java.io.Console;
-import java.util.Objects;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 public class Authenticator {
 
     private final NetworkProvider networkProvider;
-    private String login;
-    private String password;
-    private final Scanner scanner;
+    private final Scanner scanner = new Scanner(System.in);
 
-    public Authenticator(NetworkProvider networkProvider, Scanner scanner) {
+    public Authenticator(NetworkProvider networkProvider) {
         this.networkProvider = networkProvider;
-        this.scanner = scanner;
     }
 
-    public String getLogin() {
-        return login;
-    }
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    private void readPassword() throws InvalidInputException {
+    private String readPassword(int attempt) throws InvalidInputException {
 
         Console console = System.console();
 
-        System.out.print(ConsoleColors.BLUE_BRIGHT + "Enter password: " + ConsoleColors.RESET);
+        System.out.print(
+                ConsoleColors.BLUE_BRIGHT +
+                String.format("Enter password %s: ", (attempt == 1 ? "" : "again")) +
+                ConsoleColors.RESET
+        );
 
+        String password;
         // if console is available
         if (console != null) {
             password = String.valueOf(console.readPassword());
@@ -51,16 +42,48 @@ public class Authenticator {
         if (password.equals("")) {
             throw new InvalidInputException("Password can't be empty string! Please try to enter a password again");
         }
+
+        return password;
     }
 
-    private void readLogin() throws InvalidInputException {
+
+    /**
+     * Method encodes password using the SHA-256 algorithm
+     */
+    private String encodePassword(String password) {
+
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+
+            // Apply SHA-256 hashing to the password
+            byte[] hashedBytes = messageDigest.digest(password.getBytes());
+
+            // Convert the hashed bytes to hexadecimal format
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashedBytes) {
+                sb.append(String.format("%02x", b));
+            }
+
+            return sb.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
+    }
+
+
+    private String readLogin() throws InvalidInputException {
 
         System.out.print(ConsoleColors.BLUE_BRIGHT + "Enter login: " + ConsoleColors.RESET);
-        login = scanner.nextLine();
+        String login = scanner.nextLine();
 
         if (login.equals("")) {
-            throw new InvalidInputException("Login can't be empty string! Please try to enter a password again");
+            throw new InvalidInputException("Login can't be an empty string! Please try to enter a password again");
         }
+
+        return login;
     }
 
 
@@ -68,16 +91,58 @@ public class Authenticator {
 
         while (true) {
 
-            System.out.println(ConsoleColors.BLUE_BRIGHT + "Choose an option: 1 - sign up, 2 - log in: " + ConsoleColors.RESET);
-
-            int option = 0;
             try {
-                option = Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println(ConsoleColors.RED + "Option is a number 1 or 2" + ConsoleColors.RESET);
+
+                System.out.print(ConsoleColors.BLUE_BRIGHT + "Choose an option: 1 - sign up, 2 - log in: " + ConsoleColors.RESET);
+
+                int option = 0;
+                try {
+                    option = Integer.parseInt(scanner.nextLine().trim());
+                } catch (NumberFormatException e) {
+                    throw new InvalidInputException(ConsoleColors.RED + "Option is a number 1 or 2" + ConsoleColors.RESET);
+                }
+
+                Request authenticationRequest;
+
+                if (option == 1) {
+
+                    String login = readLogin();
+                    String password1 = readPassword(1);
+                    String password2 = readPassword(2);
+
+                    if (password1.equals(password2)) {
+                        password1 = encodePassword(password1);
+                        authenticationRequest = new AuthenticationRequest(true, login, password1);
+                    } else {
+                        throw new InvalidInputException("Passwords must the same! Please try to sign up again");
+                    }
+
+                } else if (option == 2) {
+                    String login = readLogin();
+                    String password = readPassword(1);
+                    password = encodePassword(password);
+                    authenticationRequest = new AuthenticationRequest(false, login, password);
+
+                } else {
+                    throw new InvalidInputException(ConsoleColors.RED + "Option is a number 1 or 2" + ConsoleColors.RESET);
+                }
+
+                networkProvider.send(authenticationRequest);
+
+                AuthenticationResponse response = (AuthenticationResponse) networkProvider.receive();
+
+                if (response == null) {
+                    System.out.println(ConsoleColors.RED + "Server is down :(\nPlease try again later" + ConsoleColors.RESET);
+                } else if (response.isAuthenticated()) {
+                    System.out.println(ConsoleColors.GREEN + "Authentication was successful" + ConsoleColors.RESET);
+                    break;
+                } else {
+                    System.out.println(response.getException().getMessage());
+                }
+
+            } catch (InvalidInputException e) {
+                System.out.println(e.getMessage());
             }
-
-
         }
     }
 }

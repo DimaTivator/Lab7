@@ -2,7 +2,7 @@ package commonModule.commands;
 
 import server.collectionManagement.CollectionManager;
 import server.collectionManagement.CollectionPrinter;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Response;
 
 
 /**

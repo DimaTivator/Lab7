@@ -1,13 +1,13 @@
 package commonModule.commands.commandObjects;
 
 import commonModule.commands.CommandTemplate;
+import commonModule.dataStructures.network.CommandResponse;
 import server.collectionManagement.CollectionManager;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Response;
 import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
 import commonModule.collectionClasses.HumanBeing;
 import commonModule.commands.CommandWithResponse;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -64,6 +64,6 @@ public class UpdateCommand extends CommandTemplate implements CommandWithRespons
 
     @Override
     public Response getCommandResponse() {
-        return new Response("update", getArgs(), "Done!");
+        return new CommandResponse("update", getArgs(), "Done!");
     }
 }

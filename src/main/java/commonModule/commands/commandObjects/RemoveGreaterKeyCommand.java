@@ -1,7 +1,8 @@
 package commonModule.commands.commandObjects;
 
+import commonModule.dataStructures.network.CommandResponse;
 import server.collectionManagement.CollectionManager;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Response;
 import commonModule.exceptions.EmptyCollectionException;
 import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
 import commonModule.collectionClasses.HumanBeing;
@@ -72,7 +73,7 @@ public class RemoveGreaterKeyCommand extends CommandTemplate implements CommandW
 
     @Override
     public Response getCommandResponse() {
-        return new Response("remove_greater_key", getArgs(), "Done!");
+        return new CommandResponse("remove_greater_key", getArgs(), "Done!");
     }
 }
 

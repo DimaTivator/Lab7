@@ -1,16 +1,14 @@
 package commonModule.commands.commandObjects;
 
+import commonModule.dataStructures.network.CommandResponse;
 import server.collectionManagement.CollectionManager;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Response;
 import commonModule.exceptions.EmptyCollectionException;
 import commonModule.collectionClasses.HumanBeing;
 import commonModule.commands.CommandTemplate;
 import commonModule.commands.CommandWithResponse;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * The RemoveLowerCommand class extends the Command class.
@@ -55,7 +53,7 @@ public class RemoveLowerCommand extends CommandTemplate implements CommandWithRe
 
     @Override
     public Response getCommandResponse() {
-        return new Response("remove_lower", getArgs(), "Done!");
+        return new CommandResponse("remove_lower", getArgs(), "Done!");
     }
 }
 

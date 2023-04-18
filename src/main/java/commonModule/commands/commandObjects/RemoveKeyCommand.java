@@ -1,7 +1,8 @@
 package commonModule.commands.commandObjects;
 
+import commonModule.dataStructures.network.CommandResponse;
 import server.collectionManagement.CollectionManager;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Response;
 import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
 import commonModule.collectionClasses.HumanBeing;
 import commonModule.commands.CommandTemplate;
@@ -49,7 +50,7 @@ public class RemoveKeyCommand extends CommandTemplate implements CommandWithResp
 
     @Override
     public Response getCommandResponse() {
-        return new Response("remove_key", getArgs(), "Done!");
+        return new CommandResponse("remove_key", getArgs(), "Done!");
     }
 }
 

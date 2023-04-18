@@ -1,8 +1,9 @@
 package commonModule.commands.commandObjects;
 
 import commonModule.auxiliaryClasses.ConsoleColors;
+import commonModule.dataStructures.network.CommandResponse;
 import server.collectionManagement.CollectionManager;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Response;
 import commonModule.exceptions.EmptyCollectionException;
 import commonModule.collectionClasses.Car;
 import commonModule.collectionClasses.HumanBeing;
@@ -62,6 +63,6 @@ public class FilterLessThanCarCommand extends CommandTemplate implements Command
 
     @Override
     public Response getCommandResponse() {
-        return new Response("filter_less_than_car", getArgs(), output.toString());
+        return new CommandResponse("filter_less_than_car", getArgs(), output.toString());
     }
 }

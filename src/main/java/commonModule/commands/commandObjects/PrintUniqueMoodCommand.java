@@ -1,8 +1,9 @@
 package commonModule.commands.commandObjects;
 
 import commonModule.auxiliaryClasses.ConsoleColors;
+import commonModule.dataStructures.network.CommandResponse;
 import server.collectionManagement.CollectionManager;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Response;
 import commonModule.exceptions.EmptyCollectionException;
 import commonModule.collectionClasses.HumanBeing;
 import commonModule.collectionClasses.Mood;
@@ -76,6 +77,6 @@ public class PrintUniqueMoodCommand extends CommandTemplate implements CommandWi
 
     @Override
     public Response getCommandResponse() {
-        return new Response("print_unique_mood", getArgs(), output.toString());
+        return new CommandResponse("print_unique_mood", getArgs(), output.toString());
     }
 }

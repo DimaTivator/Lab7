@@ -21,14 +21,13 @@ public class DatabaseHandler {
     public void connect() {
         try {
             connection = DriverManager.getConnection(URL, username, password);
-            System.out.println("Success!");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             System.exit(0);
         }
     }
 
-    public boolean userExists(String login) throws SQLException {
+    public synchronized boolean userExists(String login) throws SQLException {
         String checkUsersExists = "select " +
                 "exists (" +
                 " select login" +
@@ -39,18 +38,14 @@ public class DatabaseHandler {
         userExistsStatement.setString(1, login);
 
         ResultSet resultSet = userExistsStatement.executeQuery();
-        userExistsStatement.close();
 
-        boolean result = resultSet.next() && resultSet.getBoolean(1);
-        resultSet.close();
-
-        return result;
+        return resultSet.next() && resultSet.getBoolean(1);
     }
 
     /**
      * Method that adds a new user to database
      */
-    public boolean registerUser(String login, String password) throws SQLException {
+    public synchronized boolean registerUser(String login, String password) throws SQLException {
 
         if (userExists(login)) {
             return false;
@@ -63,9 +58,26 @@ public class DatabaseHandler {
         registerUserStatement.setString(1, login);
         registerUserStatement.setString(2, password);
 
-        registerUserStatement.execute();
+        registerUserStatement.executeUpdate();
         registerUserStatement.close();
 
         return true;
+    }
+
+    public synchronized String getUsersPassword(String login) throws SQLException {
+
+        String getPasswordQuery = "select password from \"Users\" where login = ?";
+
+        PreparedStatement getPasswordStatement = connection.prepareStatement(getPasswordQuery);
+
+        getPasswordStatement.setString(1, login);
+
+        ResultSet resultSet = getPasswordStatement.executeQuery();
+
+        if (resultSet.next()) {
+            return resultSet.getString(1);
+        } else {
+            return null;
+        }
     }
 }

@@ -2,8 +2,9 @@ package commonModule.commands.commandObjects;
 
 import commonModule.auxiliaryClasses.ConsoleColors;
 import commonModule.commands.CommandTemplate;
+import commonModule.dataStructures.network.CommandResponse;
 import server.collectionManagement.CollectionPrinter;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Response;
 import commonModule.commands.CommandWithResponse;
 
 import java.util.Map;
@@ -39,30 +40,24 @@ public class HelpCommand extends CommandTemplate implements CommandWithResponse 
         commands.forEach((key, value) -> {
 
             output.append(ConsoleColors.GREEN);
-            // System.out.print(ConsoleColors.GREEN);
             for (int i = 0; i < key.length(); i++) {
                 char letter = key.charAt(i);
 
                 if (letter == '<') {
                     output.append(letter).append(ConsoleColors.PURPLE);
-                    // System.out.print(letter + ConsoleColors.PURPLE);
                 } else if (letter == '>') {
                     output.append(ConsoleColors.GREEN).append(letter);
-                    // System.out.print(ConsoleColors.GREEN + letter);
                 } else {
                     output.append(letter);
-                    // System.out.print(letter);
                 }
             }
             output.append(ConsoleColors.RESET + ": ").append(value).append("\n");
-            // System.out.println(ConsoleColors.RESET + ": " + value);
         });
         output.append("\n");
-        // System.out.println();
     }
 
     @Override
     public Response getCommandResponse() {
-        return new Response("help", getArgs(), output.toString());
+        return new CommandResponse("help", getArgs(), output.toString());
     }
 }

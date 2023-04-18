@@ -27,8 +27,6 @@ public class CollectionPrinter {
         commands.put("update <id> <element>", "update the value of a collection item whose id is equal to the specified one");
         commands.put("remove_key <key>", "remove the item with the specified key");
         commands.put("clear", "clear collection");
-        commands.put("save", "saves collection to the xml file with the standard name");
-        commands.put("save <file_name>", "saves collection to the xml file with the specified name");
         commands.put("execute_script <file_name>", "executes a script from the file with the specified name");
         commands.put("exit", "terminate the program (without saving to a file)");
         commands.put("remove_lower <element>", "remove all items less than the specified one from the collection");

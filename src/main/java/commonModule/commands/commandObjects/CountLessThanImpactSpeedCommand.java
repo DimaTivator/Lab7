@@ -1,8 +1,9 @@
 package commonModule.commands.commandObjects;
 
 import commonModule.auxiliaryClasses.ConsoleColors;
+import commonModule.dataStructures.network.CommandResponse;
 import server.collectionManagement.CollectionManager;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Response;
 import commonModule.exceptions.EmptyCollectionException;
 import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
 import commonModule.collectionClasses.HumanBeing;
@@ -75,6 +76,6 @@ public class CountLessThanImpactSpeedCommand extends CommandTemplate implements 
 
     @Override
     public Response getCommandResponse() {
-        return new Response("count_less_than_impact_speed", getArgs(), output.toString());
+        return new CommandResponse("count_less_than_impact_speed", getArgs(), output.toString());
     }
 }

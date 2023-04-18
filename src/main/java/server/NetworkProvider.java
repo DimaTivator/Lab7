@@ -1,7 +1,7 @@
 package server;
 
-import commonModule.dataStructures.Request;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Request;
+import commonModule.dataStructures.network.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

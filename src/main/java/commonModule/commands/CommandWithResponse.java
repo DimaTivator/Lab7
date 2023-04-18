@@ -1,6 +1,6 @@
 package commonModule.commands;
 
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Response;
 
 public interface CommandWithResponse extends Command {
 

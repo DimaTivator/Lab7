@@ -1,7 +1,8 @@
 package commonModule.commands.commandObjects;
 
+import commonModule.dataStructures.network.CommandResponse;
 import server.collectionManagement.CollectionManager;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Response;
 import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
 import commonModule.collectionClasses.HumanBeing;
 import commonModule.commands.CommandTemplate;
@@ -57,7 +58,7 @@ public class ReplaceIfGreaterCommand extends CommandTemplate implements CommandW
 
     @Override
     public Response getCommandResponse() {
-        return new Response("replace_if_greater", getArgs(), "Done!");
+        return new CommandResponse("replace_if_greater", getArgs(), "Done!");
     }
 }
 

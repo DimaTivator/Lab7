@@ -1,7 +1,7 @@
 package client;
 
-import commonModule.dataStructures.Request;
-import commonModule.dataStructures.Response;
+import commonModule.dataStructures.network.Request;
+import commonModule.dataStructures.network.Response;
 
 import java.io.*;
 import java.net.*;
