@@ -26,7 +26,7 @@ public class Server {
 
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
 
         try {
             Class.forName("org.postgresql.Driver");
