@@ -7,7 +7,9 @@ import commonModule.exceptions.EmptyCollectionException;
 import commonModule.collectionClasses.HumanBeing;
 import commonModule.commands.CommandTemplate;
 import commonModule.commands.CommandWithResponse;
+import server.database.DatabaseManager;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 /**
@@ -34,7 +36,7 @@ public class RemoveLowerCommand extends CommandTemplate implements CommandWithRe
      * @throws EmptyCollectionException If the collection is empty.
      */
     @Override
-    public void execute() throws EmptyCollectionException {
+    public void execute() throws EmptyCollectionException, SQLException {
         Map<Long, HumanBeing> data = getCollectionManager().getCollection();
         HumanBeing humanBeing = (HumanBeing) getValue();
 
@@ -44,11 +46,22 @@ public class RemoveLowerCommand extends CommandTemplate implements CommandWithRe
 
         Map <Long, String> elementsOwners = getCollectionManager().getElementsOwners();
 
+        DatabaseManager databaseManager = getDatabaseManager();
+
+        for (Long key : data.keySet()) {
+            HumanBeing value = data.get(key);
+            if (value.compareTo(humanBeing) > 0 && elementsOwners.get(value.getId()).equals(getUserLogin())) {
+                databaseManager.removeHumanBeing(value.getId());
+            }
+        }
+
         data.entrySet().stream()
                 .filter(entry -> entry.getValue().compareTo(humanBeing) < 0 &&
                         elementsOwners.get(entry.getValue().getId()).equals(getUserLogin()))
                 .map(Map.Entry::getKey).toList()
                 .forEach(data::remove);
+
+
 
         getCollectionManager().sort();
     }

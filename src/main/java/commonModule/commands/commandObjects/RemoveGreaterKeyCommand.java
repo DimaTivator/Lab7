@@ -8,7 +8,9 @@ import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
 import commonModule.collectionClasses.HumanBeing;
 import commonModule.commands.CommandTemplate;
 import commonModule.commands.CommandWithResponse;
+import server.database.DatabaseManager;
 
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +49,7 @@ public class RemoveGreaterKeyCommand extends CommandTemplate implements CommandW
      * @throws EmptyCollectionException If the collection is empty.
      */
     @Override
-    public void execute() throws EmptyCollectionException {
+    public void execute() throws EmptyCollectionException, SQLException {
         Map<Long, HumanBeing> data = getCollectionManager().getCollection();
         Long inputKey = Long.parseLong(getArgs()[0]);
 
@@ -60,15 +62,23 @@ public class RemoveGreaterKeyCommand extends CommandTemplate implements CommandW
          */
         Set<Long> keySet = new HashSet<>();
 
+        Set<Long> idSet = new HashSet<>();
+
         Map <Long, String> elementsOwners = getCollectionManager().getElementsOwners();
 
         data.forEach((key, value) -> {
             if (key.compareTo(inputKey) > 0 && elementsOwners.get(value.getId()).equals(getUserLogin())) {
                 keySet.add(key);
+                idSet.add(value.getId());
             }
         });
 
         keySet.forEach(data::remove);
+
+        DatabaseManager databaseManager = getDatabaseManager();
+        for (Long id : idSet) {
+            databaseManager.removeHumanBeing(id);
+        }
 
         getCollectionManager().sort();
     }

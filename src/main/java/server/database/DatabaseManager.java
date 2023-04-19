@@ -19,7 +19,7 @@ public class DatabaseManager extends CollectionManager {
 
     public boolean insertCar(Car car) throws SQLException {
 
-        String carInsertQuery = "insert into Cars (name, cool) values (?, ?)";
+        String carInsertQuery = "insert into \"Cars\" (name, cool) values (?, ?)";
 
         try (PreparedStatement carInsertStatement = databaseHandler.getConnection().prepareStatement(carInsertQuery)) {
 
@@ -73,7 +73,7 @@ public class DatabaseManager extends CollectionManager {
 
     public int getCarId(Car car) throws SQLException {
 
-        String getCarIdQuery = "select id from \"Car\" where name = ? and cool = ?";
+        String getCarIdQuery = "select id from \"Cars\" where name = ? and cool = ?";
 
         try (PreparedStatement getCarIdStatement = databaseHandler.getConnection().prepareStatement(getCarIdQuery)) {
 
@@ -110,6 +110,22 @@ public class DatabaseManager extends CollectionManager {
     }
 
 
+    public int generateHumanBeingPK() throws SQLException {
+
+        String generatePKQuery = "select nextval('human_being_id_seq'::regclass)";
+
+        try (PreparedStatement generatePKStatement = databaseHandler.getConnection().prepareStatement(generatePKQuery)) {
+            ResultSet resultSet = generatePKStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        }
+
+        return 0;
+    }
+
+
     public boolean insertHumanBeing(HumanBeing humanBeing, String owner, Long key) throws SQLException {
 
         if (humanBeing.getCar() != null) {
@@ -117,15 +133,18 @@ public class DatabaseManager extends CollectionManager {
             int carId = getCarId(humanBeing.getCar());
         }
 
+        int humanBeingPK = generateHumanBeingPK();
+        humanBeing.setId((long) humanBeingPK);
+
         int moodId = getMoodId(humanBeing.getMood());
         int weaponTypeId = getWeaponTypeId(humanBeing.getWeaponType());
         int ownerId = getUserId(owner);
 
-        String insertHumanBeginQuery = "insert into \"HumanBeing\" (name, x_coordinate, " +
+        String insertHumanBeingQuery = "insert into \"HumanBeing\" (name, x_coordinate, " +
                 "y_coordinate, real_hero, has_toothpick, impact_speed, mood_id, weapon_type_id, " +
-                "car_id, creation_date, owner_id, collection_key) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "car_id, creation_date, owner_id, collection_key, \"humanBeing_pk\") values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement insertHumanBeingStatement = databaseHandler.getConnection().prepareStatement(insertHumanBeginQuery)) {
+        try (PreparedStatement insertHumanBeingStatement = databaseHandler.getConnection().prepareStatement(insertHumanBeingQuery)) {
 
             insertHumanBeingStatement.setString(1, humanBeing.getName());
             insertHumanBeingStatement.setDouble(2, humanBeing.getCoordinates().getX());
@@ -147,6 +166,7 @@ public class DatabaseManager extends CollectionManager {
             insertHumanBeingStatement.setDate(10, Date.valueOf(humanBeing.getCreationDate()));
             insertHumanBeingStatement.setInt(11, ownerId);
             insertHumanBeingStatement.setObject(12, key);
+            insertHumanBeingStatement.setInt(13, humanBeingPK);
 
             insertHumanBeingStatement.executeUpdate();
 
@@ -158,7 +178,7 @@ public class DatabaseManager extends CollectionManager {
 
     public boolean removeHumanBeing(Long id) throws SQLException {
 
-        String removeQuery = "delete from \"HumanBeing\" where id = ?";
+        String removeQuery = "delete from \"HumanBeing\" where \"humanBeing_pk\" = ?";
 
         try (PreparedStatement removeStatement = databaseHandler.getConnection().prepareStatement(removeQuery)) {
 

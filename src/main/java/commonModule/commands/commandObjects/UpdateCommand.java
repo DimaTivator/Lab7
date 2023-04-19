@@ -10,7 +10,9 @@ import commonModule.dataStructures.network.Response;
 import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
 import commonModule.collectionClasses.HumanBeing;
 import commonModule.commands.CommandWithResponse;
+import server.database.DatabaseManager;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 /**
@@ -43,7 +45,7 @@ public class UpdateCommand extends CommandTemplate implements CommandWithRespons
      * Executes the UpdateCommand. This method updates the value of an existing key in the collection.
      */
     @Override
-    public void execute() throws InvalidArgumentsException, ObjectAccessException {
+    public void execute() throws InvalidArgumentsException, ObjectAccessException, SQLException {
         Map<Long, HumanBeing> data = getCollectionManager().getCollection();
         Long id = Long.parseLong(getArgs()[0]);
         HumanBeing newValue = (HumanBeing) getValue();
@@ -56,6 +58,17 @@ public class UpdateCommand extends CommandTemplate implements CommandWithRespons
 
         if (!getCollectionManager().getElementsOwners().get(id).equals(getUserLogin())) {
             throw new ObjectAccessException();
+        }
+
+        DatabaseManager databaseManager = getDatabaseManager();
+
+        for (Long key : data.keySet()) {
+            HumanBeing value = data.get(key);
+
+            if (id.equals(value.getId())) {
+                databaseManager.removeHumanBeing(value.getId());
+                databaseManager.insertHumanBeing(newValue, getUserLogin(), key);
+            }
         }
 
         data.entrySet().stream()

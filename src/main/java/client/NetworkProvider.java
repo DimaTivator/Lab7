@@ -21,7 +21,7 @@ public class NetworkProvider {
         this.port = port;
 
         datagramSocket = new DatagramSocket();
-        datagramSocket.setSoTimeout(5000);
+        datagramSocket.setSoTimeout(15000);
 
         System.out.println("===== Client started! Server on " + address + ":" + port + " =====");
     }

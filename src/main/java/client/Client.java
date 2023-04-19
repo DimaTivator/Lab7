@@ -50,6 +50,10 @@ public class Client {
             CommandParser commandParser = new CommandParser();
             ScriptExecutor scriptExecutor = new ScriptExecutor();
 
+            // User authentication
+            Authenticator authenticator = new Authenticator(networkProvider);
+            authenticator.authenticate();
+
 
             for (int i = 0; i < args.length; i++) {
                 if (args[i].equals("-exec")) {
@@ -57,7 +61,7 @@ public class Client {
                         String filePath = args[i + 1];
                         Path path = Paths.get(filePath);
                         if (Files.exists(path)) {
-                            scriptExecutor.executeScript(filePath, networkProvider);
+                            scriptExecutor.executeScript(filePath, networkProvider, authenticator);
                         } else {
                             System.out.printf(ConsoleColors.RED + "File %s does not exists!\n" + ConsoleColors.RESET, filePath);
                             System.exit(0);
@@ -68,10 +72,6 @@ public class Client {
                     }
                 }
             }
-
-            // User authentication
-            Authenticator authenticator = new Authenticator(networkProvider);
-            authenticator.authenticate();
 
             System.out.println("If you want to see the list of available commands, enter 'help'");
 
@@ -95,7 +95,7 @@ public class Client {
 
                     else if (commandName.equals("execute_script")) {
                         if (commandArgs.length == 1) {
-                            scriptExecutor.executeScript(commandArgs[0], networkProvider);
+                            scriptExecutor.executeScript(commandArgs[0], networkProvider, authenticator);
                         } else {
                             throw new InvalidArgumentsException("Command execute_script take only one argument - path to the script");
                         }

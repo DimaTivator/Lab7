@@ -1,9 +1,6 @@
 package server;
 
 import commonModule.auxiliaryClasses.ConsoleColors;
-import commonModule.collectionClasses.HumanBeing;
-import commonModule.io.fileIO.in.HumanBeingXMLParser;
-import commonModule.io.fileIO.in.Parser;
 import server.Threads.ClientHandlerThread;
 import server.Threads.ConsoleInputThread;
 import server.collectionManagement.CollectionManager;
@@ -15,12 +12,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.BindException;
 import java.sql.SQLException;
-import java.util.LinkedHashMap;
+import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import server.database.DataLoader;
 import server.database.DatabaseHandler;
 import server.database.DatabaseManager;
 
@@ -78,14 +76,17 @@ public class Server {
 
         } catch (BindException e) {
             System.out.println(ConsoleColors.RED + "Port is busy. Try to enter another port" + ConsoleColors.RESET);
+            logger.error(e.getMessage());
             System.exit(0);
 
         } catch (NumberFormatException e) {
             System.out.println(ConsoleColors.RED + "Port must be a number!" + ConsoleColors.RESET);
+            logger.error(e.getMessage());
             System.exit(0);
 
         } catch (IOException e) {
             System.out.println(e.getMessage());
+            logger.error(e.getMessage());
             System.exit(0);
         }
 
@@ -98,10 +99,20 @@ public class Server {
         CommandsExecutor commandsExecutor = new CommandsExecutor(collectionManager, collectionPrinter);
 
         DataLoader dataLoader = new DataLoader(databaseHandler);
+
         try {
-            collectionManager.setCollection(dataLoader.loadCollection());
+            collectionManager.setCollection(Collections.synchronizedMap(dataLoader.loadCollection()));
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            logger.error(e.getMessage());
+            System.exit(0);
+        }
+
+        try {
+            collectionManager.setElementsOwners(Collections.synchronizedMap(dataLoader.loadElementsOwners()));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
             System.exit(0);
         }
 

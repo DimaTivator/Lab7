@@ -21,7 +21,7 @@ public class NetworkProvider {
         DatagramChannel datagramChannel = DatagramChannel.open();
 
         serverSocket = datagramChannel.socket();
-        // serverSocket.setSoTimeout(2000);
+        // serverSocket.setSoTimeout(1000);
         serverSocket.bind(new InetSocketAddress(port));
     }
 

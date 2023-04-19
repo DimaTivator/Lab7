@@ -69,8 +69,6 @@ public class CountLessThanImpactSpeedCommand extends CommandTemplate implements 
 
         output.append("The number of objects whose impactSpeed field value is less than the specified one is " + ConsoleColors.GREEN);
         output.append(counter).append(ConsoleColors.RESET).append("\n");
-//        System.out.println("The number of objects whose impactSpeed field value is less than the specified one is " +
-//                ConsoleColors.GREEN + counter + ConsoleColors.RESET);
 
     }
 

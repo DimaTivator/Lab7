@@ -33,7 +33,6 @@ public class CollectionManager {
      */
     private final java.time.LocalDate creationDate;
 
-    private final HumanBeingXMLWriter humanBeingXMLWriter;
 
     /**
      * The collection of {@link HumanBeing} objects.
@@ -47,7 +46,6 @@ public class CollectionManager {
      */
     public CollectionManager() {
         creationDate = java.time.LocalDate.now();
-        humanBeingXMLWriter = new HumanBeingXMLWriter();
     }
 
     /**
@@ -73,7 +71,7 @@ public class CollectionManager {
      *
      * @param collection the collection to set.
      */
-    public void setCollection(LinkedHashMap<Long, HumanBeing> collection) throws EmptyCollectionException {
+    public void setCollection(Map<Long, HumanBeing> collection) throws EmptyCollectionException {
         if (collection == null) {
             throw new EmptyCollectionException();
         }
@@ -91,18 +89,6 @@ public class CollectionManager {
 
     public void save(String filePath) {
 
-        Path path = Paths.get(filePath);
-
-        if (!Files.exists(path)) {
-            try {
-                Files.createDirectories(path.getParent()); // Create directories if they don't exist
-                Files.createFile(path); // Create the file
-
-            } catch (IOException e) {
-                System.out.println(ConsoleColors.RED + "Some troubles with creating file to save data :(" + ConsoleColors.RESET);
-            }
-        }
-        humanBeingXMLWriter.writeData(data, filePath);
     }
 
     public void sort() {

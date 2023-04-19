@@ -48,6 +48,8 @@ public class Authenticator {
             password = scanner.nextLine();
         }
 
+        password = encodePassword(password);
+
         return password;
     }
 
@@ -116,8 +118,8 @@ public class Authenticator {
                     String password2 = readPassword(2);
 
                     if (password1.equals(password2)) {
-                        password = password1;;
-                        authenticationRequest = new AuthenticationRequest(true, login, encodePassword(password));
+                        password = password1;
+                        authenticationRequest = new AuthenticationRequest(true, login, password);
                     } else {
                         throw new InvalidInputException("Passwords must the same! Please try to sign up again");
                     }
@@ -125,7 +127,7 @@ public class Authenticator {
                 } else if (option == 2) {
                     login = readLogin();
                     password = readPassword(1);
-                    authenticationRequest = new AuthenticationRequest(false, login, encodePassword(password));
+                    authenticationRequest = new AuthenticationRequest(false, login, password);
 
                 } else {
                     throw new InvalidInputException(ConsoleColors.RED + "Option is a number 1 or 2" + ConsoleColors.RESET);

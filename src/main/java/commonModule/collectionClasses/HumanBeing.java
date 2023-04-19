@@ -101,6 +101,7 @@ public class HumanBeing implements Comparable<HumanBeing>, Serializable {
 
     public void setId(Long id) {
         this.id = id;
+        lastID = id;
     }
 
     public void updateId() {

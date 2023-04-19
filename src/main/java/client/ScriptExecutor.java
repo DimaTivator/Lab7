@@ -29,12 +29,12 @@ public class ScriptExecutor {
     /**
      * Executes the commands from the script file located at the given file path.
      */
-    public void executeScript(String filePath, NetworkProvider networkProvider) throws Exception {
+    public void executeScript(String filePath, NetworkProvider networkProvider, Authenticator authenticator) throws Exception {
 
         File file = new File(filePath);
         Scanner scanner = new Scanner(file);
         CommandParser commandParser = new CommandParser();
-        Request request;
+        CommandRequest request;
 
         usedScripts.add(filePath);
 
@@ -50,10 +50,12 @@ public class ScriptExecutor {
                         throw new ScriptsRecursionException("You should not call execute_script recursively!");
                     }
                     usedScripts.add(args[0]);
-                    executeScript(args[0], networkProvider);
+                    executeScript(args[0], networkProvider, authenticator);
                 }
                 else {
                     request = new CommandRequest(commandParser.pack(parsedCommand));
+                    request.setLogin(authenticator.getLogin());
+                    request.setPassword(authenticator.getPassword());
                     networkProvider.send(request);
 
                     CommandResponse response = (CommandResponse) networkProvider.receive();

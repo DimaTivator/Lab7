@@ -48,21 +48,19 @@ public class InsertCommand extends CommandTemplate implements CommandWithRespons
     public void execute() throws InvalidArgumentsException, SQLException {
         Map<Long, HumanBeing> data = getCollectionManager().getCollection();
         Long key = Long.parseLong(getArgs()[0]);
+        HumanBeing value = (HumanBeing) getValue();
 
         if (data.containsKey(key)) {
             throw new InvalidArgumentsException("Collection already contains this key!\nPlease try to enter a command again");
         }
 
-        HumanBeing value = (HumanBeing) getValue();
+        DatabaseManager databaseManager = getDatabaseManager();
+        databaseManager.insertHumanBeing(value, getUserLogin(), key);
+
         data.put(key, value);
-        value.updateId();
-        getCollectionManager().sort();
 
         Map <Long, String> elementsOwners = getCollectionManager().getElementsOwners();
         elementsOwners.put(value.getId(), getUserLogin());
-
-        DatabaseManager databaseManager = getDatabaseManager();
-        databaseManager.insertHumanBeing(value, getUserLogin(), key);
     }
 
     @Override

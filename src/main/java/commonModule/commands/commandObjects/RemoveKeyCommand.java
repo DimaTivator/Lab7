@@ -8,7 +8,9 @@ import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
 import commonModule.collectionClasses.HumanBeing;
 import commonModule.commands.CommandTemplate;
 import commonModule.commands.CommandWithResponse;
+import server.database.DatabaseManager;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 /**
@@ -42,13 +44,16 @@ public class RemoveKeyCommand extends CommandTemplate implements CommandWithResp
      * Removes a key-value pair from the collection using the specified key.
      */
     @Override
-    public void execute() throws ObjectAccessException {
+    public void execute() throws ObjectAccessException, SQLException {
         Map<Long, HumanBeing> data = getCollectionManager().getCollection();
         Long key = Long.parseLong(getArgs()[0]);
 
         if (!getCollectionManager().getElementsOwners().get(data.get(key).getId()).equals(getUserLogin())) {
             throw new ObjectAccessException();
         }
+
+        DatabaseManager databaseManager = getDatabaseManager();
+        databaseManager.removeHumanBeing(data.get(key).getId());
 
         data.remove(key);
 

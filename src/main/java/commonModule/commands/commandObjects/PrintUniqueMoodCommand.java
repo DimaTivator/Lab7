@@ -66,12 +66,12 @@ public class PrintUniqueMoodCommand extends CommandTemplate implements CommandWi
         });
 
         if (uniqueMoodList.isEmpty()) {
-            // System.out.println("There is no unique moods in collection :(");
             output.append("There is no unique moods in collection :(\n");
         } else {
             output.append(ConsoleColors.GREEN + "The list of unique moods of HumanBeing objects from the collection: " + ConsoleColors.RESET).append("\n");
-            // System.out.println(ConsoleColors.GREEN + "The list of unique moods of HumanBeing objects from the collection: " + ConsoleColors.RESET);
-            uniqueMoodList.forEach(System.out::println);
+            uniqueMoodList.forEach(x -> {
+                output.append(x).append("\n");
+            });
         }
     }
 

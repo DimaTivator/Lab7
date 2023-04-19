@@ -8,7 +8,9 @@ import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
 import commonModule.collectionClasses.HumanBeing;
 import commonModule.commands.CommandTemplate;
 import commonModule.commands.CommandWithResponse;
+import server.database.DatabaseManager;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 /**
@@ -44,7 +46,7 @@ public class ReplaceIfGreaterCommand extends CommandTemplate implements CommandW
      * if the value is greater than the current value.
      */
     @Override
-    public void execute() throws ObjectAccessException {
+    public void execute() throws ObjectAccessException, SQLException {
         Map<Long, HumanBeing> data = getCollectionManager().getCollection();
         Long key = Long.parseLong(getArgs()[0]);
         HumanBeing value = (HumanBeing) getValue();
@@ -53,8 +55,11 @@ public class ReplaceIfGreaterCommand extends CommandTemplate implements CommandW
             throw new ObjectAccessException();
         }
 
+        DatabaseManager databaseManager = getDatabaseManager();
+
         if (value.compareTo(data.get(key)) > 0) {
-            value.updateId();
+            databaseManager.removeHumanBeing(value.getId());
+            databaseManager.insertHumanBeing(value, getUserLogin(), key);
             data.put(key, value);
         }
 

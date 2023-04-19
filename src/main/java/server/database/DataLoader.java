@@ -1,8 +1,7 @@
-package server;
+package server.database;
 
 import commonModule.collectionClasses.*;
 import commonModule.exceptions.InvalidCoordinatesException;
-import server.database.DatabaseHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +9,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class DataLoader {
 
@@ -20,7 +20,7 @@ public class DataLoader {
     }
 
 
-    public LinkedHashMap<Long, HumanBeing> loadCollection() throws SQLException, InvalidCoordinatesException {
+    public Map<Long, HumanBeing> loadCollection() throws SQLException, InvalidCoordinatesException {
 
         String query = "select h.\"humanBeing_pk\", h.name, h.x_coordinate, h.y_coordinate, h.real_hero, h.has_toothpick,\n" +
                 "h.impact_speed, m.name, wt.name, h.car_id, car.name, car.cool, h.creation_date, h.collection_key\n" +
@@ -29,7 +29,7 @@ public class DataLoader {
                 "inner join \"Weapon_type\" wt on h.weapon_type_id = wt.id\n" +
                 "left join \"Cars\" car on h.car_id = car.id;";
 
-        LinkedHashMap<Long, HumanBeing> data = new LinkedHashMap<>();
+        Map<Long, HumanBeing> data = new LinkedHashMap<>();
 
         try (PreparedStatement statement = databaseHandler.getConnection().prepareStatement(query)) {
 
@@ -85,7 +85,23 @@ public class DataLoader {
     }
 
 
-//    public HashMap<Long, String> elementsOwnersLoader() {
-//
-//    }
+    public Map<Long, String> loadElementsOwners() throws SQLException {
+
+        Map<Long, String> elementsOwners = new HashMap<>();
+
+        String query = "select h.\"humanBeing_pk\", u.login from \"HumanBeing\" h inner join \"Users\" u on h.owner_id = u.id";
+
+        try (PreparedStatement statement = databaseHandler.getConnection().prepareStatement(query)) {
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Long humanBeingPK = resultSet.getLong(1);
+                String login = resultSet.getString(2);
+
+                elementsOwners.put(humanBeingPK, login);
+            }
+        }
+
+        return elementsOwners;
+    }
 }
