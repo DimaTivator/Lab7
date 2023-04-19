@@ -1,6 +1,7 @@
 package commonModule.commands.commandObjects;
 
 import commonModule.dataStructures.network.CommandResponse;
+import commonModule.exceptions.ObjectAccessException;
 import server.collectionManagement.CollectionManager;
 import commonModule.dataStructures.network.Response;
 import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
@@ -41,9 +42,15 @@ public class RemoveKeyCommand extends CommandTemplate implements CommandWithResp
      * Removes a key-value pair from the collection using the specified key.
      */
     @Override
-    public void execute() {
+    public void execute() throws ObjectAccessException {
         Map<Long, HumanBeing> data = getCollectionManager().getCollection();
-        data.remove(Long.parseLong(getArgs()[0]));
+        Long key = Long.parseLong(getArgs()[0]);
+
+        if (!getCollectionManager().getElementsOwners().get(data.get(key).getId()).equals(getUserLogin())) {
+            throw new ObjectAccessException();
+        }
+
+        data.remove(key);
 
         getCollectionManager().sort();
     }

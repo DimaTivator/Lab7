@@ -1,6 +1,7 @@
 package commonModule.commands.commandObjects;
 
 import commonModule.dataStructures.network.CommandResponse;
+import commonModule.exceptions.ObjectAccessException;
 import server.collectionManagement.CollectionManager;
 import commonModule.dataStructures.network.Response;
 import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
@@ -43,10 +44,14 @@ public class ReplaceIfGreaterCommand extends CommandTemplate implements CommandW
      * if the value is greater than the current value.
      */
     @Override
-    public void execute() {
+    public void execute() throws ObjectAccessException {
         Map<Long, HumanBeing> data = getCollectionManager().getCollection();
         Long key = Long.parseLong(getArgs()[0]);
         HumanBeing value = (HumanBeing) getValue();
+
+        if (!getCollectionManager().getElementsOwners().get(value.getId()).equals(getUserLogin())) {
+            throw new ObjectAccessException();
+        }
 
         if (value.compareTo(data.get(key)) > 0) {
             value.updateId();

@@ -7,7 +7,9 @@ import commonModule.dataStructures.network.Response;
 import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
 import commonModule.collectionClasses.HumanBeing;
 import commonModule.commands.CommandWithResponse;
+import server.database.DatabaseManager;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 /**
@@ -43,7 +45,7 @@ public class InsertCommand extends CommandTemplate implements CommandWithRespons
      * to insert the element into the collection.
      */
     @Override
-    public void execute() throws InvalidArgumentsException {
+    public void execute() throws InvalidArgumentsException, SQLException {
         Map<Long, HumanBeing> data = getCollectionManager().getCollection();
         Long key = Long.parseLong(getArgs()[0]);
 
@@ -55,6 +57,12 @@ public class InsertCommand extends CommandTemplate implements CommandWithRespons
         data.put(key, value);
         value.updateId();
         getCollectionManager().sort();
+
+        Map <Long, String> elementsOwners = getCollectionManager().getElementsOwners();
+        elementsOwners.put(value.getId(), getUserLogin());
+
+        DatabaseManager databaseManager = getDatabaseManager();
+        databaseManager.insertHumanBeing(value, getUserLogin(), key);
     }
 
     @Override

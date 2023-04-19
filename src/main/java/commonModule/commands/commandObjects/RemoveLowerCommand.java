@@ -42,8 +42,11 @@ public class RemoveLowerCommand extends CommandTemplate implements CommandWithRe
             throw new EmptyCollectionException();
         }
 
+        Map <Long, String> elementsOwners = getCollectionManager().getElementsOwners();
+
         data.entrySet().stream()
-                .filter(entry -> entry.getValue().compareTo(humanBeing) < 0)
+                .filter(entry -> entry.getValue().compareTo(humanBeing) < 0 &&
+                        elementsOwners.get(entry.getValue().getId()).equals(getUserLogin()))
                 .map(Map.Entry::getKey).toList()
                 .forEach(data::remove);
 

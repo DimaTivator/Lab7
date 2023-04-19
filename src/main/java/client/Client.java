@@ -41,7 +41,7 @@ public class Client {
 
         String commandName;
         String[] commandArgs;
-        Request request;
+        CommandRequest request;
         CommandResponse response;
 
         try {
@@ -106,6 +106,10 @@ public class Client {
                         Command command = commandParser.pack(parsedInput);
 
                         request = new CommandRequest(command);
+                        request.setLogin(authenticator.getLogin());
+                        request.setPassword(authenticator.getPassword());
+
+
                         networkProvider.send(request);
                         response = (CommandResponse) networkProvider.receive();
 

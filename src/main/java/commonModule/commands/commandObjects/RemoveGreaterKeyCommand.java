@@ -60,8 +60,10 @@ public class RemoveGreaterKeyCommand extends CommandTemplate implements CommandW
          */
         Set<Long> keySet = new HashSet<>();
 
+        Map <Long, String> elementsOwners = getCollectionManager().getElementsOwners();
+
         data.forEach((key, value) -> {
-            if (key.compareTo(inputKey) > 0) {
+            if (key.compareTo(inputKey) > 0 && elementsOwners.get(value.getId()).equals(getUserLogin())) {
                 keySet.add(key);
             }
         });

@@ -40,6 +40,8 @@ public class CollectionManager {
      */
     private Map<Long, HumanBeing> data = Collections.synchronizedMap(new LinkedHashMap<>());
 
+    private Map<Long, String> elementsOwners = Collections.synchronizedMap(new HashMap<>());
+
     /**
      * Constructs a new CollectionManager and sets the creation date to the current date.
      */
@@ -78,6 +80,14 @@ public class CollectionManager {
         data = collection;
     }
 
+
+    public Map<Long, String> getElementsOwners() {
+        return elementsOwners;
+    }
+
+    public void setElementsOwners(Map<Long, String> elementsOwners) {
+        this.elementsOwners = elementsOwners;
+    }
 
     public void save(String filePath) {
 

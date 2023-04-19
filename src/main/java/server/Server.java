@@ -22,6 +22,7 @@ import java.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import server.database.DatabaseHandler;
+import server.database.DatabaseManager;
 
 public class Server {
 
@@ -58,6 +59,8 @@ public class Server {
         DatabaseHandler databaseHandler = new DatabaseHandler("jdbc:postgresql://localhost:5432/studs", username, password);
         databaseHandler.connect();
 
+        DatabaseManager databaseManager = new DatabaseManager(databaseHandler);
+
 
         if (args.length == 0) {
             System.out.println(ConsoleColors.RED + "You should enter port as an argument!" + ConsoleColors.RESET);
@@ -74,7 +77,7 @@ public class Server {
             networkProvider = new NetworkProvider(port);
 
         } catch (BindException e) {
-            System.out.println(ConsoleColors.RED + "Port in busy. Try to enter another port" + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.RED + "Port is busy. Try to enter another port" + ConsoleColors.RESET);
             System.exit(0);
 
         } catch (NumberFormatException e) {
@@ -94,44 +97,18 @@ public class Server {
         CollectionPrinter collectionPrinter = new CollectionPrinter();
         CommandsExecutor commandsExecutor = new CommandsExecutor(collectionManager, collectionPrinter);
 
-        ServerCommandExecutor serverCommandExecutor = new ServerCommandExecutor(collectionManager);
-
-        Scanner scanner = new Scanner(System.in);
-        Parser<LinkedHashMap<Long, HumanBeing>> humanBeingXMLParser = new HumanBeingXMLParser();
-
-
-        String clientsDataPath = "";
-
-        if (args.length > 1) {
-
-            try {
-                clientsDataPath = args[1];
-                serverCommandExecutor.setClientsDataPath(clientsDataPath);
-                collectionManager.setCollection(humanBeingXMLParser.parseData(clientsDataPath));
-
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                System.exit(0);
-            }
-
-        } else {
-
-            while (true) {
-
-                try {
-                    System.out.print(ConsoleColors.BLUE + "Enter a path to file with data: " + ConsoleColors.RESET);
-                    clientsDataPath = scanner.nextLine();
-
-                    serverCommandExecutor.setClientsDataPath(clientsDataPath);
-                    collectionManager.setCollection(humanBeingXMLParser.parseData(clientsDataPath));
-                    break;
-
-                } catch (Exception ignored) {
-                }
-            }
+        DataLoader dataLoader = new DataLoader(databaseHandler);
+        try {
+            collectionManager.setCollection(dataLoader.loadCollection());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.exit(0);
         }
 
-        logger.info("Data parsed from {}", clientsDataPath);
+        ServerCommandExecutor serverCommandExecutor = new ServerCommandExecutor(collectionManager);
+
+
+        logger.info("Data parsed from database");
 
         Thread consoleInputThread = new ConsoleInputThread(serverCommandExecutor, logger);
         consoleInputThread.start();
@@ -140,11 +117,11 @@ public class Server {
 
             Thread clientHandlerThread = new ClientHandlerThread(
                     databaseHandler,
+                    databaseManager,
                     networkProvider,
                     logger,
                     commandsExecutor,
-                    collectionManager,
-                    clientsDataPath
+                    collectionManager
             );
 
             clientHandlerThread.start();

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import server.NetworkProvider;
 import server.collectionManagement.CollectionManager;
 import server.database.DatabaseHandler;
+import server.database.DatabaseManager;
 
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
@@ -16,8 +17,8 @@ import java.util.concurrent.RecursiveAction;
 
 public class ClientHandlerThread extends Thread {
 
-    public ClientHandlerThread(DatabaseHandler databaseHandler,NetworkProvider networkProvider, Logger logger,
-                               CommandsExecutor commandsExecutor, CollectionManager collectionManager, String clientsDataPath) {
+    public ClientHandlerThread(DatabaseHandler databaseHandler, DatabaseManager databaseManager, NetworkProvider networkProvider,
+                               Logger logger, CommandsExecutor commandsExecutor, CollectionManager collectionManager) {
 
         super(() -> {
 
@@ -39,7 +40,8 @@ public class ClientHandlerThread extends Thread {
                            commandsExecutor,
                            networkProvider,
                            collectionManager,
-                           clientsDataPath
+                           databaseManager,
+                           databaseHandler
                    );
 
                    pool.invoke(executeCommandAction);

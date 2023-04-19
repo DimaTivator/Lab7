@@ -3,8 +3,11 @@ package commonModule.commands;
 import server.collectionManagement.CollectionManager;
 import server.collectionManagement.CollectionPrinter;
 import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
+import server.database.DatabaseHandler;
+import server.database.DatabaseManager;
 
 import java.io.Serializable;
+import java.sql.DriverManager;
 
 /**
  * The Command class is an abstract class that serves as a blueprint for various command objects
@@ -22,6 +25,12 @@ public abstract class CommandTemplate implements Command, Serializable {
      * The CollectionPrinter object that will be used to print elements in the collection.
      */
     private CollectionPrinter collectionPrinter;
+
+    private DatabaseManager databaseManager;
+
+    private DatabaseHandler databaseHandler;
+
+    private String userLogin;
 
     /**
      * Constructor to initialize the Command object with both the CollectionManager and CollectionPrinter objects.
@@ -84,6 +93,31 @@ public abstract class CommandTemplate implements Command, Serializable {
         this.collectionPrinter = collectionPrinter;
     }
 
+
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
+
+    public void setDatabaseManager(DatabaseManager databaseManager) {
+        this.databaseManager = databaseManager;
+    }
+
+    public DatabaseHandler getDatabaseHandler() {
+        return databaseHandler;
+    }
+
+    public void setDatabaseHandler(DatabaseHandler databaseHandler) {
+        this.databaseHandler = databaseHandler;
+    }
+
+
+    public String getUserLogin() {
+        return userLogin;
+    }
+
+    public void setUserLogin(String userLogin) {
+        this.userLogin = userLogin;
+    }
 
     private String[] args;
 

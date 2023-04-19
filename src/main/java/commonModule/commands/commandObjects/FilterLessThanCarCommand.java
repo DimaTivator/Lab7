@@ -48,7 +48,6 @@ public class FilterLessThanCarCommand extends CommandTemplate implements Command
         for (HumanBeing value : data.values()) {
             if (value.getCar().compareTo(car) < 0) {
                 output.append(value.getCar()).append("\n");
-                // System.out.println(value.getCar());
                 found = true;
             }
         }
@@ -56,8 +55,6 @@ public class FilterLessThanCarCommand extends CommandTemplate implements Command
         if (!found) {
             output.append(ConsoleColors.RED +
                     "There are no objects whose car field value is less than the specified one" + ConsoleColors.RESET).append("\n");
-//            System.out.println(ConsoleColors.RED +
-//                    "There are no objects whose car field value is less than the specified one" + ConsoleColors.RESET);
         }
     }
 

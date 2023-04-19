@@ -27,6 +27,12 @@ public class DatabaseHandler {
         }
     }
 
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+
     public synchronized boolean userExists(String login) throws SQLException {
         String checkUsersExists = "select " +
                 "exists (" +
@@ -34,12 +40,13 @@ public class DatabaseHandler {
                 " from \"Users\"" +
                 " where login = ?);";
 
-        PreparedStatement userExistsStatement = connection.prepareStatement(checkUsersExists);
-        userExistsStatement.setString(1, login);
+        try (PreparedStatement userExistsStatement = connection.prepareStatement(checkUsersExists)) {
+            userExistsStatement.setString(1, login);
 
-        ResultSet resultSet = userExistsStatement.executeQuery();
+            ResultSet resultSet = userExistsStatement.executeQuery();
 
-        return resultSet.next() && resultSet.getBoolean(1);
+            return resultSet.next() && resultSet.getBoolean(1);
+        }
     }
 
     /**
@@ -53,13 +60,13 @@ public class DatabaseHandler {
 
         String addUserQuery = "insert into \"Users\" (login, password) values (?, ?)";
 
-        PreparedStatement registerUserStatement = connection.prepareStatement(addUserQuery);
+        try (PreparedStatement registerUserStatement = connection.prepareStatement(addUserQuery)) {
 
-        registerUserStatement.setString(1, login);
-        registerUserStatement.setString(2, password);
+            registerUserStatement.setString(1, login);
+            registerUserStatement.setString(2, password);
 
-        registerUserStatement.executeUpdate();
-        registerUserStatement.close();
+            registerUserStatement.executeUpdate();
+        }
 
         return true;
     }
@@ -68,16 +75,17 @@ public class DatabaseHandler {
 
         String getPasswordQuery = "select password from \"Users\" where login = ?";
 
-        PreparedStatement getPasswordStatement = connection.prepareStatement(getPasswordQuery);
+        try (PreparedStatement getPasswordStatement = connection.prepareStatement(getPasswordQuery)) {
 
-        getPasswordStatement.setString(1, login);
+            getPasswordStatement.setString(1, login);
 
-        ResultSet resultSet = getPasswordStatement.executeQuery();
+            ResultSet resultSet = getPasswordStatement.executeQuery();
 
-        if (resultSet.next()) {
-            return resultSet.getString(1);
-        } else {
-            return null;
+            if (resultSet.next()) {
+                return resultSet.getString(1);
+            } else {
+                return null;
+            }
         }
     }
 }

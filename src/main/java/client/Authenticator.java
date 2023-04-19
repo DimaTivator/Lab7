@@ -15,11 +15,20 @@ public class Authenticator {
 
     private final NetworkProvider networkProvider;
     private final Scanner scanner = new Scanner(System.in);
+    private String login;
+    private String password;
 
     public Authenticator(NetworkProvider networkProvider) {
         this.networkProvider = networkProvider;
     }
 
+    public String getLogin() {
+        return login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 
     private String readPassword(int attempt) throws InvalidInputException {
 
@@ -39,10 +48,6 @@ public class Authenticator {
             password = scanner.nextLine();
         }
 
-        if (password.equals("")) {
-            throw new InvalidInputException("Password can't be empty string! Please try to enter a password again");
-        }
-
         return password;
     }
 
@@ -50,7 +55,7 @@ public class Authenticator {
     /**
      * Method encodes password using the SHA-256 algorithm
      */
-    private String encodePassword(String password) {
+    public String encodePassword(String password) {
 
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
@@ -106,22 +111,21 @@ public class Authenticator {
 
                 if (option == 1) {
 
-                    String login = readLogin();
+                    login = readLogin();
                     String password1 = readPassword(1);
                     String password2 = readPassword(2);
 
                     if (password1.equals(password2)) {
-                        password1 = encodePassword(password1);
-                        authenticationRequest = new AuthenticationRequest(true, login, password1);
+                        password = password1;;
+                        authenticationRequest = new AuthenticationRequest(true, login, encodePassword(password));
                     } else {
                         throw new InvalidInputException("Passwords must the same! Please try to sign up again");
                     }
 
                 } else if (option == 2) {
-                    String login = readLogin();
-                    String password = readPassword(1);
-                    password = encodePassword(password);
-                    authenticationRequest = new AuthenticationRequest(false, login, password);
+                    login = readLogin();
+                    password = readPassword(1);
+                    authenticationRequest = new AuthenticationRequest(false, login, encodePassword(password));
 
                 } else {
                     throw new InvalidInputException(ConsoleColors.RED + "Option is a number 1 or 2" + ConsoleColors.RESET);

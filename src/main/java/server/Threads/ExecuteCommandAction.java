@@ -1,5 +1,6 @@
 package server.Threads;
 
+import commonModule.commands.CommandTemplate;
 import commonModule.commands.CommandWithResponse;
 import commonModule.commands.CommandsExecutor;
 import commonModule.dataStructures.network.CommandRequest;
@@ -9,6 +10,8 @@ import commonModule.dataStructures.network.Response;
 import org.slf4j.Logger;
 import server.NetworkProvider;
 import server.collectionManagement.CollectionManager;
+import server.database.DatabaseHandler;
+import server.database.DatabaseManager;
 
 import java.util.concurrent.RecursiveAction;
 
@@ -19,16 +22,19 @@ public class ExecuteCommandAction extends RecursiveAction {
     private final CommandsExecutor commandsExecutor;
     private final NetworkProvider networkProvider;
     private final CollectionManager collectionManager;
-    private final String clientsDataPath;
+    private final DatabaseHandler databaseHandler;
+    private final DatabaseManager databaseManager;
 
     public ExecuteCommandAction(CommandRequest request, Logger logger, CommandsExecutor commandsExecutor,
-                                NetworkProvider networkProvider, CollectionManager collectionManager, String clientsDataPath) {
+                                NetworkProvider networkProvider, CollectionManager collectionManager,
+                                DatabaseManager databaseManager, DatabaseHandler databaseHandler) {
         this.request = request;
         this.logger = logger;
         this.commandsExecutor = commandsExecutor;
         this.networkProvider = networkProvider;
         this.collectionManager = collectionManager;
-        this.clientsDataPath = clientsDataPath;
+        this.databaseManager = databaseManager;
+        this.databaseHandler = databaseHandler;
     }
 
     @Override
@@ -36,17 +42,22 @@ public class ExecuteCommandAction extends RecursiveAction {
 
         Response response = null;
 
+        CommandTemplate command = (CommandTemplate) request.getCommand();
+
         try {
-            commandsExecutor.execute((CommandWithResponse) request.getCommand());
+            command.setDatabaseHandler(databaseHandler);
+            command.setDatabaseManager(databaseManager);
+            command.setUserLogin(request.getLogin());
+
+            commandsExecutor.execute((CommandWithResponse) command);
             response = commandsExecutor.getCommandResponse();
-            logger.info("Command {} successfully executed", request.getCommand().getClass());
+            logger.info("Command {} successfully executed", command.getClass());
 
         } catch (Exception e) {
-            logger.info("Command {} threw the exception: {}", request.getCommand().getClass(), e.getClass());
+            logger.info("Command {} threw the exception: {}", command.getClass(), e.getClass());
             response = new CommandResponse("Exception", null, e.getMessage());
 
         } finally {
-            collectionManager.save(clientsDataPath);
             Thread responseSenderThread = new ResponseSenderThread(response, networkProvider, request.getHost());
             responseSenderThread.start();
         }
