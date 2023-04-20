@@ -70,7 +70,7 @@ public class ExecuteCommandAction extends RecursiveAction {
 
                 SizeResponse sizeResponse = (SizeResponse) commandsExecutor.getCommandResponse();
                 numberOfResponses = Integer.parseInt(sizeResponse.getSize());
-                System.out.println(numberOfResponses);
+//                System.out.println(numberOfResponses);
 
 //                Thread responseSenderThread = new ResponseSenderThread(sizeResponse, networkProvider, request.getHost(), numberOfResponses);
 //                responseSenderThread.start();

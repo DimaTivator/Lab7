@@ -114,9 +114,8 @@ public class Client {
                             System.out.println(ConsoleColors.RED + "Server is down :(\nPlease try again later" + ConsoleColors.RESET);
                         }
 
-                        System.out.println(response.getClass());
                         if (response.getClass() == SizeResponse.class) {
-                            System.out.println("LOL");
+
                             sizeResponse = (SizeResponse) response;
                             numberOfPackages = Integer.parseInt(sizeResponse.getSize());
 

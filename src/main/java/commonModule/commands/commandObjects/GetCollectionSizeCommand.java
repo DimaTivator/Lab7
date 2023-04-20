@@ -25,10 +25,10 @@ public class GetCollectionSizeCommand extends CommandTemplate implements Command
         output = new StringBuilder();
 
         Map<Long, HumanBeing> data = getCollectionManager().getCollection();
-        if (data.size() % 50 == 0) {
-            output.append(data.size() / 200);
+        if (data.size() % 100 == 0) {
+            output.append(data.size() / 100);
         } else {
-            output.append(data.size() / 200 + 1);
+            output.append(data.size() / 100 + 1);
         }
     }
 
