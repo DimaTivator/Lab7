@@ -2,10 +2,7 @@ package client;
 
 import commonModule.auxiliaryClasses.ConsoleColors;
 import commonModule.commands.Command;
-import commonModule.dataStructures.network.CommandRequest;
-import commonModule.dataStructures.network.CommandResponse;
-import commonModule.dataStructures.network.Request;
-import commonModule.dataStructures.network.Response;
+import commonModule.dataStructures.network.*;
 import commonModule.dataStructures.Triplet;
 import commonModule.exceptions.commandExceptions.InvalidArgumentsException;
 import commonModule.io.consoleIO.CommandParser;
@@ -42,7 +39,9 @@ public class Client {
         String commandName;
         String[] commandArgs;
         CommandRequest request;
-        CommandResponse response;
+        Response response;
+        SizeResponse sizeResponse = null;
+        int numberOfPackages = 1;
 
         try {
 
@@ -99,9 +98,8 @@ public class Client {
                         } else {
                             throw new InvalidArgumentsException("Command execute_script take only one argument - path to the script");
                         }
-                    }
 
-                    else {
+                    } else {
 
                         Command command = commandParser.pack(parsedInput);
 
@@ -109,14 +107,30 @@ public class Client {
                         request.setLogin(authenticator.getLogin());
                         request.setPassword(authenticator.getPassword());
 
-
                         networkProvider.send(request);
-                        response = (CommandResponse) networkProvider.receive();
+                        response = networkProvider.receive();
 
                         if (response == null) {
                             System.out.println(ConsoleColors.RED + "Server is down :(\nPlease try again later" + ConsoleColors.RESET);
+                        }
+
+                        System.out.println(response.getClass());
+                        if (response.getClass() == SizeResponse.class) {
+                            System.out.println("LOL");
+                            sizeResponse = (SizeResponse) response;
+                            numberOfPackages = Integer.parseInt(sizeResponse.getSize());
+
+                            for (int i = 0; i < numberOfPackages; i++) {
+                                response = networkProvider.receive();
+                                if (response == null) {
+                                    System.out.println(ConsoleColors.RED + "Server is down :(\nPlease try again later" + ConsoleColors.RESET);
+                                } else {
+                                    System.out.println(((CommandResponse)response).getOutput());
+                                }
+                            }
+
                         } else {
-                            System.out.println(response.getOutput());
+                            System.out.println(((CommandResponse)response).getOutput());
                         }
                     }
 

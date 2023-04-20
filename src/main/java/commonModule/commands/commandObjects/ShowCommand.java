@@ -34,7 +34,7 @@ public class ShowCommand extends CommandTemplate implements CommandWithResponse 
      */
     @Override
     public void execute() throws EmptyCollectionException {
-
+        System.out.println("AKSJDFKASDFKLASLFNJKASDNFK");
         output = new StringBuilder();
 
         Map<Long, HumanBeing> data = getCollectionManager().getCollection();
@@ -44,6 +44,7 @@ public class ShowCommand extends CommandTemplate implements CommandWithResponse 
         }
 
         data.forEach((key, value) -> output.append(key).append(":\n").append(value).append("\n"));
+        // System.out.println(output.toString());
     }
 
     @Override

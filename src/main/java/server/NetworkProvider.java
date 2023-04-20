@@ -1,5 +1,7 @@
 package server;
 
+import commonModule.dataStructures.network.AuthenticationResponse;
+import commonModule.dataStructures.network.CommandResponse;
 import commonModule.dataStructures.network.Request;
 import commonModule.dataStructures.network.Response;
 import org.slf4j.Logger;
@@ -16,6 +18,8 @@ public class NetworkProvider {
 
     private final DatagramSocket serverSocket;
 
+    private int BUFFER_SIZE = 8192 * 8192;
+
     public NetworkProvider(int port) throws IOException {
 
         DatagramChannel datagramChannel = DatagramChannel.open();
@@ -31,7 +35,6 @@ public class NetworkProvider {
 
         try {
 
-            int BUFFER_SIZE = 1024 * 1024;
             ByteBuffer buf = ByteBuffer.allocate(BUFFER_SIZE);
             DatagramPacket datagramPacket = new DatagramPacket(buf.array(), buf.array().length);
 
@@ -72,7 +75,7 @@ public class NetworkProvider {
 
             serverSocket.send(responsePacket);
 
-            logger.info("Response successfully sent to {}", client);
+            logger.info("Response {} successfully sent to {}", response.getClass(), client);
 
         } catch (IOException e) {
             logger.error(e.getMessage());

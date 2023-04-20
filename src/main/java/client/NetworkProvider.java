@@ -9,7 +9,7 @@ import java.nio.ByteBuffer;
 
 public class NetworkProvider {
 
-    private final int BUFFER_SIZE = 1024 * 1024;
+    private final int BUFFER_SIZE = 8192 * 8192;
 
     private final DatagramSocket datagramSocket;
 
@@ -21,7 +21,7 @@ public class NetworkProvider {
         this.port = port;
 
         datagramSocket = new DatagramSocket();
-        datagramSocket.setSoTimeout(15000);
+        datagramSocket.setSoTimeout(25000);
 
         System.out.println("===== Client started! Server on " + address + ":" + port + " =====");
     }

@@ -4,6 +4,8 @@ import commonModule.auxiliaryClasses.ConsoleColors;
 import commonModule.commands.CommandTemplate;
 import commonModule.commands.CommandWithResponse;
 import commonModule.commands.CommandsExecutor;
+import commonModule.commands.commandObjects.GetCollectionSizeCommand;
+import commonModule.commands.commandObjects.ShowCommand;
 import commonModule.dataStructures.network.*;
 import org.slf4j.Logger;
 import server.NetworkProvider;
@@ -40,6 +42,7 @@ public class ExecuteCommandAction extends RecursiveAction {
     protected void compute() {
 
         Response response = null;
+        int numberOfResponses = 1;
 
         try {
             if (!request.getPassword().equals(databaseHandler.getUsersPassword(request.getLogin()))) {
@@ -48,7 +51,7 @@ public class ExecuteCommandAction extends RecursiveAction {
                 response = new CommandResponse("Exception", null,
                         ConsoleColors.RED + "Authentication error" + ConsoleColors.RESET);
 
-                Thread responseSenderThread = new ResponseSenderThread(response, networkProvider, request.getHost());
+                Thread responseSenderThread = new ResponseSenderThread(response, networkProvider, request.getHost(), 1);
                 responseSenderThread.start();
                 return;
             }
@@ -60,6 +63,20 @@ public class ExecuteCommandAction extends RecursiveAction {
         CommandTemplate command = (CommandTemplate) request.getCommand();
 
         try {
+            if (command.getClass() == ShowCommand.class) {
+                CommandWithResponse getCollectionSizeCommand = new GetCollectionSizeCommand(collectionManager);
+                commandsExecutor.execute(getCollectionSizeCommand);
+
+
+                SizeResponse sizeResponse = (SizeResponse) commandsExecutor.getCommandResponse();
+                numberOfResponses = Integer.parseInt(sizeResponse.getSize());
+                System.out.println(numberOfResponses);
+
+//                Thread responseSenderThread = new ResponseSenderThread(sizeResponse, networkProvider, request.getHost(), numberOfResponses);
+//                responseSenderThread.start();
+                networkProvider.send(sizeResponse, request.getHost());
+            }
+
             command.setDatabaseHandler(databaseHandler);
             command.setDatabaseManager(databaseManager);
             command.setUserLogin(request.getLogin());
@@ -78,7 +95,7 @@ public class ExecuteCommandAction extends RecursiveAction {
             response = new CommandResponse("Exception", null, e.getMessage());
 
         } finally {
-            Thread responseSenderThread = new ResponseSenderThread(response, networkProvider, request.getHost());
+            Thread responseSenderThread = new ResponseSenderThread(response, networkProvider, request.getHost(), numberOfResponses);
             responseSenderThread.start();
         }
     }

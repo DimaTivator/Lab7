@@ -50,7 +50,7 @@ public class AuthenticationThread extends Thread {
                 response.setException(e);
             }
 
-            Thread responseSenderThread = new ResponseSenderThread(response, networkProvider, request.getHost());
+            Thread responseSenderThread = new ResponseSenderThread(response, networkProvider, request.getHost(), 1);
             responseSenderThread.start();
         });
     }
