@@ -41,6 +41,10 @@ public class ResponseSenderThread extends Thread {
                     );
 
                     networkProvider.send(commandResponse, client);
+
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException ignored) {}
                 }
             }
         });
