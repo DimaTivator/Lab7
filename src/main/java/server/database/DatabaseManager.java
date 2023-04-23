@@ -11,9 +11,15 @@ import java.sql.*;
 public class DatabaseManager extends CollectionManager {
 
     private final DatabaseHandler databaseHandler;
+    private final DataLoader dataLoader;
 
-    public DatabaseManager(DatabaseHandler databaseHandler) {
+    public DatabaseManager(DatabaseHandler databaseHandler, DataLoader dataLoader) {
         this.databaseHandler = databaseHandler;
+        this.dataLoader = dataLoader;
+    }
+
+    public DataLoader getDataLoader() {
+        return dataLoader;
     }
 
 
@@ -186,6 +192,19 @@ public class DatabaseManager extends CollectionManager {
 
             removeStatement.executeUpdate();
 
+            return true;
+        }
+    }
+
+    public boolean removeAll(String login) throws SQLException {
+
+        int ownerId = getUserId(login);
+        String removeQuery = "delete from \"HumanBeing\" where owner_id = ?";
+
+        try (PreparedStatement removeStatement = databaseHandler.getConnection().prepareStatement(removeQuery)) {
+
+            removeStatement.setInt(1, ownerId);
+            removeStatement.executeUpdate();
             return true;
         }
     }

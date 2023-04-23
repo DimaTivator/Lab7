@@ -1,11 +1,13 @@
 package commonModule.commands.commandObjects;
 
 import commonModule.dataStructures.network.CommandResponse;
+import commonModule.exceptions.InvalidCoordinatesException;
 import server.collectionManagement.CollectionManager;
 import commonModule.collectionClasses.HumanBeing;
 import commonModule.dataStructures.network.Response;
 import commonModule.commands.CommandTemplate;
 import commonModule.commands.CommandWithResponse;
+import server.database.DatabaseManager;
 
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -33,24 +35,15 @@ public class ClearCollectionCommand extends CommandTemplate implements CommandWi
      * Method that clears the collection.
      */
     @Override
-    public void execute() throws SQLException {
+    public void execute() throws SQLException, InvalidCoordinatesException {
+
+        DatabaseManager databaseManager = getDatabaseManager();
+        databaseManager.removeAll(getUserLogin());
 
         Map<Long, HumanBeing> data = getCollectionManager().getCollection();
 
-        Set<Long> keySet = new HashSet<>();
-
-        Map <Long, String> elementsOwners = getCollectionManager().getElementsOwners();
-
-        for (Map.Entry<Long, HumanBeing> entry : data.entrySet()) {
-            Long key = entry.getKey();
-            HumanBeing value = entry.getValue();
-            if (elementsOwners.get(value.getId()).equals(getUserLogin()) && getDatabaseManager().removeHumanBeing(value.getId())) {
-                keySet.add(key);
-            }
-        }
-
-        keySet.forEach(data::remove);
-        keySet.forEach(elementsOwners::remove);
+        data.clear();
+        data.putAll(getDatabaseManager().getDataLoader().loadCollection());
     }
 
     @Override

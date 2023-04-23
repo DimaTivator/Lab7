@@ -56,8 +56,6 @@ public class Server {
         DatabaseHandler databaseHandler = new DatabaseHandler("jdbc:postgresql://localhost:5432/studs", username, password);
         databaseHandler.connect();
 
-        DatabaseManager databaseManager = new DatabaseManager(databaseHandler);
-
 
         if (args.length == 0) {
             System.out.println(ConsoleColors.RED + "You should enter port as an argument!" + ConsoleColors.RESET);
@@ -98,6 +96,8 @@ public class Server {
         CommandsExecutor commandsExecutor = new CommandsExecutor(collectionManager, collectionPrinter);
 
         DataLoader dataLoader = new DataLoader(databaseHandler);
+
+        DatabaseManager databaseManager = new DatabaseManager(databaseHandler, dataLoader);
 
         try {
             collectionManager.setCollection(Collections.synchronizedMap(dataLoader.loadCollection()));

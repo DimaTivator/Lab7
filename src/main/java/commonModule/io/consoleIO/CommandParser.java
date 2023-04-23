@@ -134,11 +134,10 @@ public class CommandParser extends ConsoleReader<Triplet<String, String[], Objec
 
 
     public Pair<String, String[]> getCommand(Scanner scanner) throws NoSuchCommandException {
+
         List<String> line = Arrays.stream(scanner.nextLine().strip().replaceAll(" +", " ").split(" ")).toList();
 
-        // System.out.println(line);
-
-        if (!commandsList.contains(line.get(0)) && !line.get(0).equals("")) {
+        if (!commandsList.contains(line.get(0)) || line.get(0).equals("")) {
             throw new NoSuchCommandException(String.format("Can't find command %s in commands list\n", line.get(0)) +
                     "Please try to enter command again\n");
         }
